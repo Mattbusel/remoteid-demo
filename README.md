@@ -1,27 +1,23 @@
 # remoteid-demo
 
-A runnable tour of the open-source Remote ID counter-UAS stack, in one binary.
+**Hundreds of fake drones, one real aircraft hiding in the noise. One command calls the flood and names the real one.**
 
-It generates a drone-flood scenario, runs the receive-only analyzer over it, and
-prints a plain report: **is the airspace flooded, how many fakes come from one
-source, and which track is most likely the one real drone, and why.** Point it at
-a real captured Remote ID file for the same report, or use `decode` to just
-pretty-print the Remote ID in a capture, DJI DroneID included.
+![remoteid-demo analyzing a drone-flood scenario and naming the one genuine track](docs/demo.gif)
+
+[**Live demo**](https://mattbusel.github.io/drone-demos/)
+&nbsp;·&nbsp;
+[![crates.io](https://img.shields.io/crates/v/remoteid-demo.svg)](https://crates.io/crates/remoteid-demo)
+[![downloads](https://img.shields.io/crates/d/remoteid-demo.svg)](https://crates.io/crates/remoteid-demo)
+[![docs.rs](https://img.shields.io/docsrs/remoteid-demo)](https://docs.rs/remoteid-demo)
+[![license](https://img.shields.io/crates/l/remoteid-demo.svg)](#license)
+
+A runnable tour of the open-source Remote ID counter-UAS stack, in one binary. It generates a drone-flood scenario, runs the receive-only analyzer over it, and prints a plain report: is the airspace flooded, how many fakes come from one source, and which track is most likely the one real drone, and why. It decodes to the published standards, ASTM F3411 Remote ID and DJI DroneID, over the formats `remoteid` reads (pcap, pcapng, RIDF). It is analysis only: no radio, no transmit path. The scenario generator writes test vectors the way a fuzzer corpus or an EICAR string is data and not a weapon, and the generated path and a saved capture reach the same verdict, so you can replay and check the result yourself.
 
 It stitches three crates together:
 
-- [`remoteid`](https://crates.io/crates/remoteid) decodes Remote ID (ASTM F3411,
-  DJI DroneID) and grades every transmitter.
-- [`remoteid-scenario`](https://crates.io/crates/remoteid-scenario) generates
-  spec-compliant test vectors (flood, spoof, clean).
-- [`remoteid-sentinel`](https://crates.io/crates/remoteid-sentinel) scores a whole
-  field: how flooded it is, and which track is the likely genuine drone.
-
-## Analysis only, no radio
-
-This tool never opens a radio and has no transmit path. The scenario generator
-writes test vectors, the way a fuzzer corpus or an EICAR test string is data and
-not a weapon. Nothing here broadcasts into real airspace.
+- [`remoteid`](https://crates.io/crates/remoteid) decodes Remote ID (ASTM F3411, DJI DroneID) and grades every transmitter.
+- [`remoteid-scenario`](https://crates.io/crates/remoteid-scenario) generates spec-compliant test vectors (flood, spoof, clean).
+- [`remoteid-sentinel`](https://crates.io/crates/remoteid-sentinel) scores a whole field: how flooded it is, and which track is the likely genuine drone.
 
 ## Install
 
@@ -31,8 +27,7 @@ cargo install remoteid-demo
 
 ## 1. Generate a flood and call it
 
-With no capture file, `analyze` builds a flood (one on-air source broadcasting
-hundreds of fake identities, plus one genuine moving track) and analyzes it:
+With no capture file, `analyze` builds a flood (one on-air source broadcasting hundreds of fake identities, plus one genuine moving track) and analyzes it:
 
 ```sh
 remoteid-demo analyze --count 300
@@ -69,13 +64,11 @@ remoteid-demo analyze --count 300 --save flood.pcap
 remoteid-demo analyze flood.pcap          # same report, now from the file
 ```
 
-The saved file is a standard pcap of Bluetooth LE advertising packets, so the
-generated path and the capture path reach the same verdict.
+The saved file is a standard pcap of Bluetooth LE advertising packets, so the generated path and the capture path reach the same verdict.
 
 ## 2. Analyze a real capture
 
-Point `analyze` at a real captured Remote ID file. It reads the formats
-`remoteid` reads: pcap, pcapng and RIDF.
+Point `analyze` at a real captured Remote ID file. It reads the formats `remoteid` reads: pcap, pcapng and RIDF.
 
 ```sh
 remoteid-demo analyze my-capture.pcap
@@ -95,8 +88,7 @@ Most likely real drone: ...
 
 ## 3. Decode and pretty-print
 
-`decode` walks a capture and prints every Remote ID message in it, standard
-ASTM F3411 and DJI DroneID alike.
+`decode` walks a capture and prints every Remote ID message in it, standard ASTM F3411 and DJI DroneID alike.
 
 ```sh
 remoteid-demo decode my-capture.pcap --limit 4
@@ -125,9 +117,7 @@ DJI DroneID (OcuSync / Wi-Fi):
 
 ## What the flood report means
 
-A coordinated flood hides one real drone behind a wall of fakes. The sentinel
-reads the whole field at once and raises cross-track signals no single track
-shows on its own:
+A coordinated flood hides one real drone behind a wall of fakes. The sentinel reads the whole field at once and raises cross-track signals no single track shows on its own:
 
 - **fan-out**: one radio address broadcasting many distinct identities
 - **templated serials**: a sequential or templated block of serial numbers
@@ -135,9 +125,11 @@ shows on its own:
 - **shared pilot position**: dozens of drones claiming one operator location
 - **tight signal/position cluster**: one physical emitter wearing many identities
 
-It then ranks the survivors and names the track that still looks like a real
-aircraft: a consistent moving track, a single stable identity, a serial outside
-the templated block, and (when present) a verified DRIP signature.
+It then ranks the survivors and names the track that still looks like a real aircraft: a consistent moving track, a single stable identity, a serial outside the templated block, and (when present) a verified DRIP signature.
+
+## Analysis only, no radio
+
+This tool never opens a radio and has no transmit path. The scenario generator writes test vectors, the way a fuzzer corpus or an EICAR test string is data and not a weapon. Nothing here broadcasts into real airspace.
 
 ## Help
 
@@ -149,5 +141,4 @@ remoteid-demo decode --help
 
 ## License
 
-Licensed under either of [Apache License, Version 2.0](LICENSE-APACHE) or
-[MIT license](LICENSE-MIT) at your option.
+Licensed under either of [Apache License, Version 2.0](LICENSE-APACHE) or [MIT license](LICENSE-MIT) at your option.
