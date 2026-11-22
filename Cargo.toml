@@ -1,0 +1,24 @@
+[package]
+name = "remoteid-demo"
+version = "0.1.0"
+authors = ["Matt Busel <matt@busel.dev>"]
+edition = "2021"
+rust-version = "1.74"
+description = "Runnable demo for the Remote ID counter-UAS stack: generate a drone-flood scenario (one source, hundreds of fake identities, one genuine track), run the receive-only sentinel over it, and get a plain report that calls the flood and names the one most-likely-real drone. Also analyzes real captures and pretty-prints Remote ID, including DJI DroneID. Analysis only, no radio and no transmit path."
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/Mattbusel/remoteid-demo"
+homepage = "https://github.com/Mattbusel/remoteid-demo"
+documentation = "https://docs.rs/remoteid-demo"
+readme = "README.md"
+keywords = ["remote-id", "drone", "counter-uas", "spoofing", "flood"]
+categories = ["command-line-utilities", "aerospace::drones"]
+
+[[bin]]
+name = "remoteid-demo"
+path = "src/main.rs"
+
+[dependencies]
+remoteid = { version = "0.3.3", default-features = false, features = ["std"] }
+remoteid-sentinel = "0.1.0"
+remoteid-scenario = "0.1.0"
+clap = { version = "4.5.21", features = ["derive"] }
